@@ -1,6 +1,6 @@
 name: light_modal_bottom_sheet
 description: The Light Modal Bottom Sheet package in Flutter is a lightweight and flexible solution for creating modal bottom sheets in your mobile application. It provides an easy way to implement customizable modal sheets with smooth animations and a variety of options to choose from. Whether you need a simple solution for displaying information or a complex interface, the Light Modal bottom sheet has got you covered.
-version: 0.0.1
+version: 0.0.05
 issue_tracker: https://github.com/AmirHome/light_modal_bottom_sheet/issues
 homepage: https://github.com/AmirHome/light_modal_bottom_sheet
 
