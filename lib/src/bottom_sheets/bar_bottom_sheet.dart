@@ -35,7 +35,7 @@ class BarBottomSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             SafeArea(
               bottom: false,
               child: control ??
@@ -103,13 +103,13 @@ Future<T?> showBarModalBottomSheet<T>({
     bounce: bounce,
     closeProgressThreshold: closeProgressThreshold,
     containerBuilder: (_, __, child) => BarBottomSheet(
-      child: child,
       control: topControl,
       clipBehavior: clipBehavior,
       shape: shape,
       backgroundColor: backgroundColor,
       elevation: elevation,
       overlayStyle: overlayStyle,
+      child: child,
     ),
     secondAnimationController: secondAnimation,
     expanded: expand,

@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:light_modal_bottom_sheet/src/utils/scroll_to_top_status_bar.dart';
-
 import 'package:light_modal_bottom_sheet/src/utils/bottom_sheet_suspended_curve.dart';
+import 'package:light_modal_bottom_sheet/src/utils/scroll_to_top_status_bar.dart';
 
 const Curve _decelerateEasing = Cubic(0.0, 0.0, 0.2, 1.0);
 
@@ -344,7 +344,7 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
   void initState() {
     animationCurve = _defaultCurve;
     _bounceDragController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 144));
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 144));
 
     // Todo: Check if we can remove scroll Controller
     super.initState();
@@ -417,8 +417,8 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
     );
 
     return ScrollToTopStatusBarHandler(
-      child: child,
       scrollController: _scrollController,
+      child: child,
     );
   }
 }

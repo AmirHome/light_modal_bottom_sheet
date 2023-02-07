@@ -45,7 +45,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
         if (Localizations.of(context, MaterialLocalizations) != null) {
           return MaterialLocalizations.of(context).dialogLabel;
         } else {
-          return DefaultMaterialLocalizations().dialogLabel;
+          return const DefaultMaterialLocalizations().dialogLabel;
         }
     }
   }
@@ -108,11 +108,11 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
                     Navigator.of(context).pop();
                   }
                 },
-                child: child!,
                 enableDrag: widget.enableDrag,
                 bounce: widget.bounce,
                 scrollController: scrollController,
                 animationCurve: widget.animationCurve,
+                child: child!,
               ),
             );
           },

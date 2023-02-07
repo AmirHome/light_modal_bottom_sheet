@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:light_modal_bottom_sheet/light_modal_bottom_sheet.dart';
 
-import 'modals/floating_modal.dart';
 import 'modals/modal_fit.dart';
 
 void main() {
