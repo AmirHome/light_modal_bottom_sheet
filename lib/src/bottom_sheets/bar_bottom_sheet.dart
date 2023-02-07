@@ -40,21 +40,21 @@ class BarBottomSheet extends StatelessWidget {
               bottom: false,
               child: control ??
                   Container(
-                    height: 6,
-                    width: 40,
+                    height: 3,
+                    width: MediaQuery.of(context).size.width / 5,
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(6)),
+                        borderRadius: BorderRadius.circular(5)),
                   ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 5),
             Flexible(
               flex: 1,
               fit: FlexFit.loose,
               child: Material(
                 shape: shape ??
-                    RoundedRectangleBorder(
-                      side: BorderSide(),
+                    const RoundedRectangleBorder(
+                        side: BorderSide(width: 0),
                       borderRadius: BorderRadius.only(
                           topLeft: kDefaultBarTopRadius,
                           topRight: kDefaultBarTopRadius),
@@ -81,7 +81,7 @@ Future<T?> showBarModalBottomSheet<T>({
   double? elevation,
   ShapeBorder? shape,
   Clip? clipBehavior,
-  Color barrierColor = Colors.black87,
+  Color barrierColor = Colors.black38,
   bool bounce = true,
   bool expand = false,
   AnimationController? secondAnimation,

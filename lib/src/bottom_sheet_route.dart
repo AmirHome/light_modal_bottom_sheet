@@ -5,7 +5,7 @@ import 'package:light_modal_bottom_sheet/src/utils/modal_scroll_controller.dart'
 
 import '../light_modal_bottom_sheet.dart';
 
-const Duration _bottomSheetDuration = Duration(milliseconds: 400);
+const Duration _bottomSheetDuration = Duration(milliseconds: 233);
 
 class _ModalBottomSheet<T> extends StatefulWidget {
   const _ModalBottomSheet({

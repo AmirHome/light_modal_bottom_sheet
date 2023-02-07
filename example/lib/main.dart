@@ -4,7 +4,6 @@ import 'package:light_modal_bottom_sheet/light_modal_bottom_sheet.dart';
 
 import 'modals/floating_modal.dart';
 import 'modals/modal_fit.dart';
-import 'modals/modal_inside_modal.dart';
 
 void main() {
   runApp(const MyApp());
@@ -69,6 +68,7 @@ class _MyTestPageState extends State<MyTestPage> {
                   children: <Widget>[
                     ListTile(
                       title: const Text('Material fit'),
+                      ///material_bottom_sheet.dart
                       onTap: () => showMaterialModalBottomSheet(
                         expand: false,
                         context: context,
@@ -78,20 +78,14 @@ class _MyTestPageState extends State<MyTestPage> {
                     ),
                     ListTile(
                       title: const Text('Bar Modal'),
+                      ///bar_bottom_sheet.dart
                       onTap: () => showBarModalBottomSheet(
-                        expand: true,
+                        expand: false,
                         context: context,
                         backgroundColor: Colors.transparent,
-                        builder: (context) => ModalInsideModal(),
-                      ),
-                    ),
-                    ListTile(
-                      title: const Text('Float Modal'),
-                      onTap: () => showFloatingModalBottomSheet(
-                        context: context,
                         builder: (context) => ModalFit(),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
