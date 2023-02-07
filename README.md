@@ -42,8 +42,19 @@ To use the example, navigate to the example folder in your terminal and run the 
 flutter run
 ```
 
+
 ```dart
+///Material fit
 onTap: () => showMaterialModalBottomSheet(
+        expand: false,
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) => ModalFit(),
+    ),
+```
+```dart
+///Bar Modal
+onTap: () => showBarModalBottomSheet(
         expand: false,
         context: context,
         backgroundColor: Colors.transparent,
