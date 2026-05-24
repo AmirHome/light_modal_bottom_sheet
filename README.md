@@ -112,22 +112,15 @@ It is highly recommended that you review the example code to understand the full
 the package.
 
 ## Additional information
+```
+    init_number=0; build_number=$(($(git rev-list HEAD --count) + init_number)); major=$((build_number / 2000)); minor=$(( (build_number / 20) % 10 )); patch=$((build_number % 20)); patch=$(printf "%02d" $patch); version="$major.$minor.$patch"; echo "version: $version+$build_number"
 
-The additional information section provides additional resources and tips for using the Light Modal bottom sheet package in your Flutter app. This may include:
+    dart fix --apply && flutter analyze
 
-Documentation: Detailed documentation and examples to help you get started with the package and to use it effectively.
+    flutter pub publish --dry-run
 
-Issues: A list of common issues faced by users and their solutions to help you troubleshoot any problems you may encounter.
-
-Releases: Information about new releases, bug fixes, and other updates to the package to ensure you are using the latest version.
-
-Contributions: Information about how you can contribute to the development of the package, including reporting bugs, submitting feature requests, or writing code.
-
-Support: Information about how to get help and support, including forums, mailing lists, and online communities.
-
-Roadmap: A roadmap for future development, including upcoming features and improvements to the package.
-
-Having access to this additional information will help you make the most out of the Light Modal bottom sheet package in your Flutter app.
+    flutter pub publish --force
+```
 
 
 
