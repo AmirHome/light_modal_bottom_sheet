@@ -5,11 +5,11 @@ import 'package:light_modal_bottom_sheet/src/utils/modal_scroll_controller.dart'
 
 import '../light_modal_bottom_sheet.dart';
 
-const Duration _bottomSheetDuration = Duration(milliseconds: 233);
+const Duration _bottomSheetDuration = Duration(milliseconds: 250);
 
 class _ModalBottomSheet<T> extends StatefulWidget {
   const _ModalBottomSheet({
-    Key? key,
+    super.key,
     this.closeProgressThreshold,
     required this.route,
     this.secondAnimationController,
@@ -17,7 +17,7 @@ class _ModalBottomSheet<T> extends StatefulWidget {
     this.expanded = false,
     this.enableDrag = true,
     this.animationCurve,
-  }) : super(key: key);
+  });
 
   final double? closeProgressThreshold;
   final ModalSheetRoute<T> route;
@@ -76,8 +76,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   Widget build(BuildContext context) {
     assert(debugCheckHasMediaQuery(context));
     assert(widget.route._animationController != null);
-    final scrollController = PrimaryScrollController.maybeOf(context) ??
-        (_scrollController ??= ScrollController());
+    final scrollController = PrimaryScrollController.maybeOf(context) ?? (_scrollController ??= ScrollController());
     return ModalScrollController(
       controller: scrollController,
       child: Builder(
@@ -97,10 +96,10 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
                 expanded: widget.route.expanded,
                 containerBuilder: widget.route.containerBuilder,
                 animationController: widget.route._animationController!,
-                shouldClose: widget.route._hasScopedWillPopCallback
+                shouldClose: widget.route._hasScopedPopCallback
                     ? () async {
-                        final willPop = await widget.route.willPop();
-                        return willPop != RoutePopDisposition.doNotPop;
+                        final disposition = widget.route.popDisposition;
+                        return disposition != RoutePopDisposition.doNotPop;
                       }
                     : null,
                 onClosing: () {
@@ -138,9 +137,8 @@ class ModalSheetRoute<T> extends PageRoute<T> {
     this.bounce = false,
     this.animationCurve,
     Duration? duration,
-    RouteSettings? settings,
-  })  : duration = duration ?? _bottomSheetDuration,
-        super(settings: settings);
+    super.settings,
+  }) : duration = duration ?? _bottomSheetDuration;
 
   final double? closeProgressThreshold;
   final WidgetWithChildBuilder? containerBuilder;
@@ -173,25 +171,21 @@ class ModalSheetRoute<T> extends PageRoute<T> {
   final String? barrierLabel;
 
   @override
-  Color get barrierColor => modalBarrierColor ?? Colors.black.withOpacity(0.35);
+  Color get barrierColor => modalBarrierColor ?? Colors.black.withValues(alpha: 0.32);
 
   AnimationController? _animationController;
 
   @override
   AnimationController createAnimationController() {
     assert(_animationController == null);
-    _animationController = ModalBottomSheet.createAnimationController(
-      navigator!.overlay!,
-      duration: transitionDuration,
-    );
+    _animationController = ModalBottomSheet.createAnimationController(navigator!.overlay!, duration: transitionDuration);
     return _animationController!;
   }
 
-  bool get _hasScopedWillPopCallback => hasScopedWillPopCallback;
+  bool get _hasScopedPopCallback => popDisposition != RoutePopDisposition.bubble;
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
+  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
     // By definition, the bottom sheet is aligned to the bottom of the page
     // and isn't exposed to the top padding of the MediaQuery.
     Widget bottomSheet = MediaQuery.removePadding(
@@ -211,18 +205,12 @@ class ModalSheetRoute<T> extends PageRoute<T> {
   }
 
   @override
-  bool canTransitionTo(TransitionRoute<dynamic> nextRoute) =>
-      nextRoute is ModalSheetRoute;
+  bool canTransitionTo(TransitionRoute<dynamic> nextRoute) => nextRoute is ModalSheetRoute;
 
   @override
-  bool canTransitionFrom(TransitionRoute<dynamic> previousRoute) =>
-      previousRoute is ModalSheetRoute || previousRoute is PageRoute;
+  bool canTransitionFrom(TransitionRoute<dynamic> previousRoute) => previousRoute is ModalSheetRoute || previousRoute is PageRoute;
 
-  Widget getPreviousRouteTransition(
-    BuildContext context,
-    Animation<double> secondAnimation,
-    Widget child,
-  ) {
+  Widget getPreviousRouteTransition(BuildContext context, Animation<double> secondAnimation, Widget child) {
     return child;
   }
 }
@@ -250,28 +238,25 @@ Future<T?> showCustomModalBottomSheet<T>({
 }) async {
   assert(debugCheckHasMediaQuery(context));
   assert(debugCheckHasMaterialLocalizations(context));
-  final hasMaterialLocalizations =
-      Localizations.of<MaterialLocalizations>(context, MaterialLocalizations) !=
-          null;
-  final barrierLabel = hasMaterialLocalizations
-      ? MaterialLocalizations.of(context).modalBarrierDismissLabel
-      : '';
+  final hasMaterialLocalizations = Localizations.of<MaterialLocalizations>(context, MaterialLocalizations) != null;
+  final barrierLabel = hasMaterialLocalizations ? MaterialLocalizations.of(context).modalBarrierDismissLabel : '';
 
-  final result = await Navigator.of(context, rootNavigator: useRootNavigator)
-      .push(ModalSheetRoute<T>(
-    builder: builder,
-    bounce: bounce,
-    containerBuilder: containerWidget,
-    secondAnimationController: secondAnimation,
-    expanded: expand,
-    barrierLabel: barrierLabel,
-    isDismissible: isDismissible,
-    modalBarrierColor: barrierColor,
-    enableDrag: enableDrag,
-    animationCurve: animationCurve,
-    duration: duration,
-    settings: settings,
-    closeProgressThreshold: closeProgressThreshold,
-  ));
+  final result = await Navigator.of(context, rootNavigator: useRootNavigator).push(
+    ModalSheetRoute<T>(
+      builder: builder,
+      bounce: bounce,
+      containerBuilder: containerWidget,
+      secondAnimationController: secondAnimation,
+      expanded: expand,
+      barrierLabel: barrierLabel,
+      isDismissible: isDismissible,
+      modalBarrierColor: barrierColor,
+      enableDrag: enableDrag,
+      animationCurve: animationCurve,
+      duration: duration,
+      settings: settings,
+      closeProgressThreshold: closeProgressThreshold,
+    ),
+  );
   return result;
 }

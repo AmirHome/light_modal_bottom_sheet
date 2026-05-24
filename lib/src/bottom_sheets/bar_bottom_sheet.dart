@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../../light_modal_bottom_sheet.dart' as light_modal_bottom_sheet;
 
-const Radius kDefaultBarTopRadius = Radius.circular(15);
+const Radius kDefaultBarTopRadius = Radius.circular(28);
 
 class BarBottomSheet extends StatelessWidget {
   final Widget child;
@@ -17,7 +17,7 @@ class BarBottomSheet extends StatelessWidget {
   final SystemUiOverlayStyle? overlayStyle;
 
   const BarBottomSheet({
-    Key? key,
+    super.key,
     required this.child,
     this.control,
     this.clipBehavior,
@@ -25,51 +25,49 @@ class BarBottomSheet extends StatelessWidget {
     this.backgroundColor,
     this.elevation,
     this.overlayStyle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayStyle ?? SystemUiOverlayStyle.light,
       child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 12),
-            SafeArea(
-              bottom: false,
-              child: control ??
-                  Container(
-                    height: 3,
-                    width: MediaQuery.of(context).size.width / 5,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5)),
-                  ),
-            ),
-            const SizedBox(height: 5),
-            Flexible(
-              flex: 1,
-              fit: FlexFit.loose,
-              child: Material(
-                shape: shape ??
-                    const RoundedRectangleBorder(
-                        side: BorderSide(width: 0),
-                      borderRadius: BorderRadius.only(
-                          topLeft: kDefaultBarTopRadius,
-                          topRight: kDefaultBarTopRadius),
-                    ),
-                clipBehavior: clipBehavior ?? Clip.hardEdge,
-                color: backgroundColor ?? Colors.white,
-                elevation: elevation ?? 2,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: MediaQuery.removePadding(
-                      context: context, removeTop: true, child: child),
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 22),
+          SafeArea(
+            bottom: false,
+            child:
+                control ??
+                Container(
+                  height: 4,
+                  width: 32,
+                  decoration: BoxDecoration(color: colorScheme.onSurfaceVariant, borderRadius: BorderRadius.circular(2)),
                 ),
+          ),
+          const SizedBox(height: 22),
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
+            child: Material(
+              shape:
+                  shape ??
+                  const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(topLeft: kDefaultBarTopRadius, topRight: kDefaultBarTopRadius),
+                  ),
+              clipBehavior: clipBehavior ?? Clip.hardEdge,
+              color: backgroundColor ?? colorScheme.surfaceContainerLow,
+              elevation: elevation ?? 1,
+              child: SizedBox(
+                width: double.infinity,
+                child: MediaQuery.removePadding(context: context, removeTop: true, child: child),
               ),
             ),
-          ]),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -81,7 +79,7 @@ Future<T?> showBarModalBottomSheet<T>({
   double? elevation,
   ShapeBorder? shape,
   Clip? clipBehavior,
-  Color barrierColor = Colors.black38,
+  Color? barrierColor,
   bool bounce = true,
   bool expand = false,
   AnimationController? secondAnimation,
@@ -97,29 +95,30 @@ Future<T?> showBarModalBottomSheet<T>({
 }) async {
   assert(debugCheckHasMediaQuery(context));
   assert(debugCheckHasMaterialLocalizations(context));
-  final result = await Navigator.of(context, rootNavigator: useRootNavigator)
-      .push(light_modal_bottom_sheet.ModalSheetRoute<T>(
-    builder: builder,
-    bounce: bounce,
-    closeProgressThreshold: closeProgressThreshold,
-    containerBuilder: (_, __, child) => BarBottomSheet(
-      control: topControl,
-      clipBehavior: clipBehavior,
-      shape: shape,
-      backgroundColor: backgroundColor,
-      elevation: elevation,
-      overlayStyle: overlayStyle,
-      child: child,
+  final result = await Navigator.of(context, rootNavigator: useRootNavigator).push(
+    light_modal_bottom_sheet.ModalSheetRoute<T>(
+      builder: builder,
+      bounce: bounce,
+      closeProgressThreshold: closeProgressThreshold,
+      containerBuilder: (_, _, child) => BarBottomSheet(
+        control: topControl,
+        clipBehavior: clipBehavior,
+        shape: shape,
+        backgroundColor: backgroundColor,
+        elevation: elevation,
+        overlayStyle: overlayStyle,
+        child: child,
+      ),
+      secondAnimationController: secondAnimation,
+      expanded: expand,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      isDismissible: isDismissible,
+      modalBarrierColor: barrierColor,
+      enableDrag: enableDrag,
+      animationCurve: animationCurve,
+      duration: duration,
+      settings: settings,
     ),
-    secondAnimationController: secondAnimation,
-    expanded: expand,
-    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    isDismissible: isDismissible,
-    modalBarrierColor: barrierColor,
-    enableDrag: enableDrag,
-    animationCurve: animationCurve,
-    duration: duration,
-    settings: settings,
-  ));
+  );
   return result;
 }

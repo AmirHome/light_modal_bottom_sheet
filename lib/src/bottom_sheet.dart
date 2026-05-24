@@ -9,15 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:light_modal_bottom_sheet/src/utils/bottom_sheet_suspended_curve.dart';
 import 'package:light_modal_bottom_sheet/src/utils/scroll_to_top_status_bar.dart';
 
-const Curve _decelerateEasing = Cubic(0.0, 0.0, 0.2, 1.0);
+// M3 emphasized decelerate easing for bottom sheet entrance/exit
+const Curve _decelerateEasing = Cubic(0.05, 0.7, 0.1, 1.0);
 
-const Duration _bottomSheetDuration = Duration(milliseconds: 233);
+const Duration _bottomSheetDuration = Duration(milliseconds: 250);
 const double _minFlingVelocity = 500.0;
 const double _closeProgressThreshold = 0.6;
 const double _willPopThreshold = 0.8;
 
-typedef WidgetWithChildBuilder = Widget Function(
-    BuildContext context, Animation<double> animation, Widget child);
+typedef WidgetWithChildBuilder = Widget Function(BuildContext context, Animation<double> animation, Widget child);
 
 /// A custom bottom sheet.
 ///
@@ -33,7 +33,7 @@ typedef WidgetWithChildBuilder = Widget Function(
 class ModalBottomSheet extends StatefulWidget {
   /// Creates a bottom sheet.
   const ModalBottomSheet({
-    Key? key,
+    super.key,
     required this.animationController,
     this.animationCurve,
     this.enableDrag = true,
@@ -47,9 +47,7 @@ class ModalBottomSheet extends StatefulWidget {
     this.minFlingVelocity = _minFlingVelocity,
     double? closeProgressThreshold,
     this.willPopThreshold = _willPopThreshold,
-  })  : closeProgressThreshold =
-            closeProgressThreshold ?? _closeProgressThreshold,
-        super(key: key);
+  }) : closeProgressThreshold = closeProgressThreshold ?? _closeProgressThreshold;
 
   /// The closeProgressThreshold parameter
   /// specifies when the bottom sheet will be dismissed when user drags it.
@@ -121,20 +119,12 @@ class ModalBottomSheet extends StatefulWidget {
   /// This API available as a convenience for a Material compliant bottom sheet
   /// animation. If alternative animation durations are required, a different
   /// animation controller could be provided.
-  static AnimationController createAnimationController(
-    TickerProvider vsync, {
-    Duration? duration,
-  }) {
-    return AnimationController(
-      duration: duration ?? _bottomSheetDuration,
-      debugLabel: 'BottomSheet',
-      vsync: vsync,
-    );
+  static AnimationController createAnimationController(TickerProvider vsync, {Duration? duration}) {
+    return AnimationController(duration: duration ?? _bottomSheetDuration, debugLabel: 'BottomSheet', vsync: vsync);
   }
 }
 
-class ModalBottomSheetState extends State<ModalBottomSheet>
-    with TickerProviderStateMixin {
+class ModalBottomSheetState extends State<ModalBottomSheet> with TickerProviderStateMixin {
   final GlobalKey _childKey = GlobalKey(debugLabel: 'BottomSheet child');
 
   ScrollController get _scrollController => widget.scrollController;
@@ -147,19 +137,16 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
     return renderBox.size.height;
   }
 
-  bool get _dismissUnderway =>
-      widget.animationController.status == AnimationStatus.reverse;
+  bool get _dismissUnderway => widget.animationController.status == AnimationStatus.reverse;
 
   // Detect if user is dragging.
   // Used on NotificationListener to detect if ScrollNotifications are
   // before or after the user stop dragging
   bool isDragging = false;
 
-  bool get hasReachedWillPopThreshold =>
-      widget.animationController.value < _willPopThreshold;
+  bool get hasReachedWillPopThreshold => widget.animationController.value < _willPopThreshold;
 
-  bool get hasReachedCloseThreshold =>
-      widget.animationController.value < widget.closeProgressThreshold;
+  bool get hasReachedCloseThreshold => widget.animationController.value < widget.closeProgressThreshold;
 
   void _close() {
     isDragging = false;
@@ -225,10 +212,7 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
   void _handleDragEnd(double velocity) async {
     assert(widget.enableDrag, 'Dragging is disabled');
 
-    animationCurve = BottomSheetSuspendedCurve(
-      widget.animationController.value,
-      curve: _defaultCurve,
-    );
+    animationCurve = BottomSheetSuspendedCurve(widget.animationController.value, curve: _defaultCurve);
 
     if (_dismissUnderway || !isDragging) return;
     isDragging = false;
@@ -277,10 +261,11 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
     // ignore: invalid_use_of_protected_member
     if (_scrollController.positions.length > 1) {
       // ignore: invalid_use_of_protected_member
-      scrollPosition = _scrollController.positions
-          .firstWhere((p) => p.isScrollingNotifier.value,
-              // ignore: invalid_use_of_protected_member
-              orElse: () => _scrollController.positions.first);
+      scrollPosition = _scrollController.positions.firstWhere(
+        (p) => p.isScrollingNotifier.value,
+        // ignore: invalid_use_of_protected_member
+        orElse: () => _scrollController.positions.first,
+      );
     } else {
       scrollPosition = _scrollController.position;
     }
@@ -288,9 +273,7 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
     if (scrollPosition.axis == Axis.horizontal) return;
 
     final isScrollReversed = scrollPosition.axisDirection == AxisDirection.down;
-    final offset = isScrollReversed
-        ? scrollPosition.pixels
-        : scrollPosition.maxScrollExtent - scrollPosition.pixels;
+    final offset = isScrollReversed ? scrollPosition.pixels : scrollPosition.maxScrollExtent - scrollPosition.pixels;
 
     if (offset <= 0) {
       // Clamping Scroll Physics end with a ScrollEndNotification with a DragEndDetail class
@@ -343,8 +326,7 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
   @override
   void initState() {
     animationCurve = _defaultCurve;
-    _bounceDragController =
-        AnimationController(vsync: this, duration: const Duration(milliseconds: 144));
+    _bounceDragController = AnimationController(vsync: this, duration: const Duration(milliseconds: 144));
 
     // Todo: Check if we can remove scroll Controller
     super.initState();
@@ -352,18 +334,11 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
 
   @override
   Widget build(BuildContext context) {
-    final bounceAnimation = CurvedAnimation(
-      parent: _bounceDragController,
-      curve: Curves.easeOutSine,
-    );
+    final bounceAnimation = CurvedAnimation(parent: _bounceDragController, curve: Curves.easeOutSine);
 
     var child = widget.child;
     if (widget.containerBuilder != null) {
-      child = widget.containerBuilder!(
-        context,
-        widget.animationController,
-        child,
-      );
+      child = widget.containerBuilder!(context, widget.animationController, child);
     }
 
     final mediaQuery = MediaQuery.of(context);
@@ -372,10 +347,7 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
       animation: widget.animationController,
       builder: (context, Widget? child) {
         assert(child != null);
-        final animationValue = animationCurve.transform(
-            mediaQuery.accessibleNavigation
-                ? 1.0
-                : widget.animationController.value);
+        final animationValue = animationCurve.transform(mediaQuery.accessibleNavigation ? 1.0 : widget.animationController.value);
 
         final draggableChild = !widget.enableDrag
             ? child
@@ -404,22 +376,13 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
                 ),
               );
         return ClipRect(
-          child: CustomSingleChildLayout(
-            delegate: _ModalBottomSheetLayout(
-              animationValue,
-              widget.expanded,
-            ),
-            child: draggableChild,
-          ),
+          child: CustomSingleChildLayout(delegate: _ModalBottomSheetLayout(animationValue, widget.expanded), child: draggableChild),
         );
       },
       child: RepaintBoundary(child: child),
     );
 
-    return ScrollToTopStatusBarHandler(
-      scrollController: _scrollController,
-      child: child,
-    );
+    return ScrollToTopStatusBarHandler(scrollController: _scrollController, child: child);
   }
 }
 

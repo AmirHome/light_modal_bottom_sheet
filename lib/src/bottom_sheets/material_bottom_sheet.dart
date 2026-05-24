@@ -26,59 +26,55 @@ Future<T?> showMaterialModalBottomSheet<T>({
 }) async {
   assert(debugCheckHasMediaQuery(context));
   assert(debugCheckHasMaterialLocalizations(context));
-  final result = await Navigator.of(context, rootNavigator: useRootNavigator)
-      .push(light_modal_bottom_sheet.ModalSheetRoute<T>(
-    builder: builder,
-    closeProgressThreshold: closeProgressThreshold,
-    containerBuilder: _materialContainerBuilder(
-      context,
-      backgroundColor: backgroundColor,
-      elevation: elevation,
-      shape: shape,
-      clipBehavior: clipBehavior,
-      theme: Theme.of(context),
+  final result = await Navigator.of(context, rootNavigator: useRootNavigator).push(
+    light_modal_bottom_sheet.ModalSheetRoute<T>(
+      builder: builder,
+      closeProgressThreshold: closeProgressThreshold,
+      containerBuilder: _materialContainerBuilder(
+        context,
+        backgroundColor: backgroundColor,
+        elevation: elevation,
+        shape: shape,
+        clipBehavior: clipBehavior,
+        theme: Theme.of(context),
+      ),
+      secondAnimationController: secondAnimation,
+      bounce: bounce,
+      expanded: expand,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      isDismissible: isDismissible,
+      modalBarrierColor: barrierColor,
+      enableDrag: enableDrag,
+      animationCurve: animationCurve,
+      duration: duration,
+      settings: settings,
     ),
-    secondAnimationController: secondAnimation,
-    bounce: bounce,
-    expanded: expand,
-    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    isDismissible: isDismissible,
-    modalBarrierColor: barrierColor,
-    enableDrag: enableDrag,
-    animationCurve: animationCurve,
-    duration: duration,
-    settings: settings,
-  ));
+  );
   return result;
 }
 
 //Default container builder is the Material Appearance
 light_modal_bottom_sheet.WidgetWithChildBuilder _materialContainerBuilder(
-    BuildContext context,
-    {Color? backgroundColor,
-    double? elevation,
-    ThemeData? theme,
-    Clip? clipBehavior,
-    ShapeBorder? shape}) {
+  BuildContext context, {
+  Color? backgroundColor,
+  double? elevation,
+  ThemeData? theme,
+  Clip? clipBehavior,
+  ShapeBorder? shape,
+}) {
   final bottomSheetTheme = Theme.of(context).bottomSheetTheme;
-  final color = backgroundColor ??
-      bottomSheetTheme.modalBackgroundColor ??
-      bottomSheetTheme.backgroundColor;
-  final effectiveElevation = elevation ?? bottomSheetTheme.elevation ?? 0.0;
-  final effectiveShape = shape ?? bottomSheetTheme.shape;
-  final effectiveClipBehavior =
-      clipBehavior ?? bottomSheetTheme.clipBehavior ?? Clip.none;
+  final colorScheme = Theme.of(context).colorScheme;
+  final color =
+      backgroundColor ?? bottomSheetTheme.modalBackgroundColor ?? bottomSheetTheme.backgroundColor ?? colorScheme.surfaceContainerLow;
+  final effectiveElevation = elevation ?? bottomSheetTheme.elevation ?? 1.0;
+  final effectiveShape =
+      shape ?? bottomSheetTheme.shape ?? const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28)));
+  final effectiveClipBehavior = clipBehavior ?? bottomSheetTheme.clipBehavior ?? Clip.antiAlias;
 
-  Widget result(context, animation, child) => Material(
-        color: color,
-        elevation: effectiveElevation,
-        shape: effectiveShape,
-        clipBehavior: effectiveClipBehavior,
-        child: child,
-      );
+  Widget result(context, animation, child) =>
+      Material(color: color, elevation: effectiveElevation, shape: effectiveShape, clipBehavior: effectiveClipBehavior, child: child);
   if (theme != null) {
-    return (context, animation, child) =>
-        Theme(data: theme, child: result(context, animation, child));
+    return (context, animation, child) => Theme(data: theme, child: result(context, animation, child));
   } else {
     return result;
   }

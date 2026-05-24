@@ -8,16 +8,7 @@ class MaterialWithModalsPageRoute<T> extends MaterialPageRoute<T> {
   ///
   /// The values of [builder], [maintainState], and [fullScreenDialog] must not
   /// be null.
-  MaterialWithModalsPageRoute({
-    required WidgetBuilder builder,
-    RouteSettings? settings,
-    bool maintainState = true,
-    bool fullscreenDialog = false,
-  }) : super(
-            settings: settings,
-            fullscreenDialog: fullscreenDialog,
-            builder: builder,
-            maintainState: maintainState);
+  MaterialWithModalsPageRoute({required super.builder, super.settings, super.maintainState, super.fullscreenDialog});
 
   light_modal_bottom_sheet.ModalSheetRoute? _nextModalRoute;
 
@@ -26,8 +17,7 @@ class MaterialWithModalsPageRoute<T> extends MaterialPageRoute<T> {
     // Don't perform outgoing animation if the next route is a fullscreen dialog.
     return (nextRoute is MaterialPageRoute && !nextRoute.fullscreenDialog) ||
         (nextRoute is CupertinoPageRoute && !nextRoute.fullscreenDialog) ||
-        (nextRoute is MaterialWithModalsPageRoute &&
-            !nextRoute.fullscreenDialog) ||
+        (nextRoute is MaterialWithModalsPageRoute && !nextRoute.fullscreenDialog) ||
         (nextRoute is light_modal_bottom_sheet.ModalSheetRoute);
   }
 
@@ -47,26 +37,21 @@ class MaterialWithModalsPageRoute<T> extends MaterialPageRoute<T> {
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     final theme = Theme.of(context).pageTransitionsTheme;
     final nextRoute = _nextModalRoute;
     if (nextRoute != null) {
       if (!secondaryAnimation.isDismissed) {
         // Avoid default transition theme to animate when a new modal view is pushed
-        final fakeSecondaryAnimation =
-            Tween<double>(begin: 0, end: 0).animate(secondaryAnimation);
+        final fakeSecondaryAnimation = Tween<double>(begin: 0, end: 0).animate(secondaryAnimation);
 
-        final defaultTransition = theme.buildTransitions<T>(
-            this, context, animation, fakeSecondaryAnimation, child);
-        return nextRoute.getPreviousRouteTransition(
-            context, secondaryAnimation, defaultTransition);
+        final defaultTransition = theme.buildTransitions<T>(this, context, animation, fakeSecondaryAnimation, child);
+        return nextRoute.getPreviousRouteTransition(context, secondaryAnimation, defaultTransition);
       } else {
         _nextModalRoute = null;
       }
     }
 
-    return theme.buildTransitions<T>(
-        this, context, animation, secondaryAnimation, child);
+    return theme.buildTransitions<T>(this, context, animation, secondaryAnimation, child);
   }
 }

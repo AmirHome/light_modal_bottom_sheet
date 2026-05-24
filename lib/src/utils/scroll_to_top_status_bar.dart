@@ -8,11 +8,7 @@ class ScrollToTopStatusBarHandler extends StatefulWidget {
   final Widget child;
   final ScrollController scrollController;
 
-  const ScrollToTopStatusBarHandler({
-    Key? key,
-    required this.child,
-    required this.scrollController,
-  }) : super(key: key);
+  const ScrollToTopStatusBarHandler({super.key, required this.child, required this.scrollController});
 
   @override
   ScrollToTopStatusBarState createState() => ScrollToTopStatusBarState();

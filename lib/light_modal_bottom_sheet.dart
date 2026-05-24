@@ -1,4 +1,4 @@
-library light_modal_bottom_sheet;
+library;
 
 export 'src/bottom_sheet.dart';
 export 'src/bottom_sheet_route.dart';
