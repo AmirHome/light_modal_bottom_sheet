@@ -1,4 +1,4 @@
-## 0.0.09
+## 0.0.9
 * Updated dependencies.
 * Compatibility with newer Flutter 3.44.0
 
